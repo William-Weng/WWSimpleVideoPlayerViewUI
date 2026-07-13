@@ -9,21 +9,20 @@
 ![SPM](https://img.shields.io/badge/SPM-supported-brightgreen.svg)
 [![LICENSE](https://img.shields.io/badge/LICENSE-MIT-yellow.svg?style=flat)](https://developer.apple.com/swift/)
 
-根據 Apple 的 `VideoPlayer` 與 `AVPlayer` 所開發的輕量影片播放器。
+A lightweight video player view built on top of Apple's `VideoPlayer` and `AVPlayer`.
 
-## 🧩 簡介
+## 🧩 Introduction
 
-- 使用 SwiftUI 的 `VideoPlayer`，直接展示系統內建的播放控制器。
-- 背後使用 `AVPlayer` 來播放本地或網路影片。
-- 使用 `Binding<URL>` 與 `Binding<Bool>` 接收外部影片來源與是否自動播放。
-- 支援在播放過程中更換影片來源，例如切換不同的 .mp4 或 HLS 網址。
-```
+- Uses SwiftUI's `VideoPlayer` to display the built-in system playback controls. [web:26]
+- Under the hood, it uses `AVPlayer` to play local or remote media. [web:27]
+- Accepts `Binding<URL>` and `Binding<Bool>` for the video source and autoplay behavior. [web:26]
+- Supports changing the video source during playback, e.g., switching between different `.mp4` or HLS URLs. [web:27]
 
+```swift
 import SwiftUI
 import WWSimpleVideoPlayerViewUI
 
 struct ContentView: View {
-
     @State var isAutoplay = true
     @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
 
@@ -37,7 +36,8 @@ struct ContentView: View {
 }
 ```
 
-## 📦 安裝方式
+
+## 📦 Installation
 
 ### Swift Package Manager
 
@@ -45,27 +45,27 @@ struct ContentView: View {
 swift package add https://github.com/William-Weng/WWSimpleVideoPlayerViewUI.git
 ```
 
-或在 Xcode 中：
+Or in Xcode:
 
 ```
 File → Add Packages → https://github.com/William-Weng/WWSimpleVideoPlayerViewUI.git
 ```
 
-## ✨ 功能
+## ✨ Features
 
-- 使用原生 `VideoPlayer`，自帶播放、暫停、音量、進度條與全屏控制。
-- 可透過外部 `Binding<URL>` 動態更換影片來源。
-- 可透過 `Binding<Bool>` 控制是否自動播放。
-- 支援本地資源與遠端影片播放。
+- Built with the native `VideoPlayer`, which provides play, pause, volume, progress bar, and fullscreen controls out of the box.
+- Video source can be changed dynamically via an external `Binding<URL>`.
+- Autoplay behavior can be controlled via a `Binding<Bool>`.
+- Supports both local resources and remote video playback.
 
-### 參數
+### Parameters
 
-- `url`: 影片來源 URL 的 `Binding`。
-- `isAutoplay`: 是否自動播放的 `Binding`。
+- `url`: `Binding` to the video source URL.
+- `isAutoplay`: `Binding` to control whether playback starts automatically.
 
-## 🚀 範例
+## 🚀 Examples
 
-### 基本播放
+### Basic Playback
 
 ```swift
 import SwiftUI
@@ -81,14 +81,13 @@ struct ContentView: View {
 }
 ```
 
-### 切換影片
+### Switching Video
 
 ```swift
 import SwiftUI
 import WWSimpleVideoPlayerViewUI
 
 struct ContentView: View {
-
     @State var isAutoplay = true
     @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
 
@@ -98,7 +97,7 @@ struct ContentView: View {
                 .frame(maxWidth: 400)
                 .aspectRatio(16 / 9, contentMode: .fit)
 
-            Button("切換其他影片") {
+            Button("Load another video") {
                 url = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")!
             }
         }
