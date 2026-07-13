@@ -11,6 +11,8 @@
 
 根據 Apple 的 `VideoPlayer` 與 `AVPlayer` 所開發的輕量影片播放器。
 
+https://github.com/user-attachments/assets/76af5bec-385c-482f-9437-22f6fb6d2826
+
 ## 🧩 簡介
 
 - 使用 SwiftUI 的 `VideoPlayer`，直接展示系統內建的播放控制器。

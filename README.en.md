@@ -11,6 +11,8 @@
 
 A lightweight video player view built on top of Apple's `VideoPlayer` and `AVPlayer`.
 
+https://github.com/user-attachments/assets/76af5bec-385c-482f-9437-22f6fb6d2826
+
 ## 🧩 Introduction
 
 - Uses SwiftUI's `VideoPlayer` to display the built-in system playback controls. [web:26]

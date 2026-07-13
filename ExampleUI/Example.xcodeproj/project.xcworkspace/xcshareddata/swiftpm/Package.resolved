@@ -1,0 +1,15 @@
+{
+  "originHash" : "a54d113628f6d4ba2959fe0e7802570931b03157e20f73bb380e2ad0ca82d25a",
+  "pins" : [
+    {
+      "identity" : "wwsimplevideoplayerviewui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/William-Weng/WWSimpleVideoPlayerViewUI",
+      "state" : {
+        "revision" : "4f745cfd35a3052abb7f59bdf6103fbbe1029105",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

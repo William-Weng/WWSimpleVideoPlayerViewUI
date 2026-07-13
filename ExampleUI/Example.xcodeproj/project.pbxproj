@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		819B9FBB3004D1C300D7AD7B /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 819B9FBA3004D1C300D7AD7B /* WWSimpleVideoPlayerViewUI */; };
+		819B9FBE3004D75C00D7AD7B /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 819B9FBD3004D75C00D7AD7B /* WWSimpleVideoPlayerViewUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				819B9FBB3004D1C300D7AD7B /* WWSimpleVideoPlayerViewUI in Frameworks */,
+				819B9FBE3004D75C00D7AD7B /* WWSimpleVideoPlayerViewUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +78,7 @@
 			);
 			name = Example;
 			packageProductDependencies = (
-				819B9FBA3004D1C300D7AD7B /* WWSimpleVideoPlayerViewUI */,
+				819B9FBD3004D75C00D7AD7B /* WWSimpleVideoPlayerViewUI */,
 			);
 			productName = Example;
 			productReference = 8177C5772F91CB0F00ACEA3E /* Example.app */;
@@ -109,7 +109,7 @@
 			mainGroup = 8177C56E2F91CB0F00ACEA3E;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				819B9FB63004CB9100D7AD7B /* XCLocalSwiftPackageReference "../../@WWSimpleVideoPlayerViewUI" */,
+				819B9FBC3004D75C00D7AD7B /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8177C5782F91CB0F00ACEA3E /* Products */;
@@ -354,17 +354,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		819B9FB63004CB9100D7AD7B /* XCLocalSwiftPackageReference "../../@WWSimpleVideoPlayerViewUI" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../@WWSimpleVideoPlayerViewUI";
+/* Begin XCRemoteSwiftPackageReference section */
+		819B9FBC3004D75C00D7AD7B /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/William-Weng/WWSimpleVideoPlayerViewUI";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.0.0;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		819B9FBA3004D1C300D7AD7B /* WWSimpleVideoPlayerViewUI */ = {
+		819B9FBD3004D75C00D7AD7B /* WWSimpleVideoPlayerViewUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 819B9FB63004CB9100D7AD7B /* XCLocalSwiftPackageReference "../../@WWSimpleVideoPlayerViewUI" */;
+			package = 819B9FBC3004D75C00D7AD7B /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */;
 			productName = WWSimpleVideoPlayerViewUI;
 		};
 /* End XCSwiftPackageProductDependency section */
