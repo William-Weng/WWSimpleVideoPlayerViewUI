@@ -32,9 +32,7 @@ extension VideoPlayerManager {
         player.seek(to: .zero)
     }
     
-    /// 將影片播放位置跳到指定的秒數
-    ///
-    /// - Parameter seconds: 要跳到的時間點（秒）
+    /// 載入影片URL
     func loadVideo(url: URL) {
         player.replaceCurrentItem(url: url)
     }
