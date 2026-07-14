@@ -11,12 +11,18 @@ import WWSimpleVideoPlayerViewUI
 struct ContentView: View {
     
     @State var isAutoplay = true
-    @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
+    @State var source: ShortVideo = .init(url: .init(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!)
     
     var body: some View {
-        WWSimpleVideoPlayerViewUI(url: $url, isAutoplay: $isAutoplay)
+        WWSimpleVideoPlayerViewUI<ShortVideo>(source: $source, isAutoplay: $isAutoplay)
             .frame(maxWidth: .infinity)
     }
+}
+
+struct ShortVideo: WWSimpleVideoPlayerDataSource {
+    
+    let id: UUID = .init()
+    var url: URL
 }
 
 #Preview {

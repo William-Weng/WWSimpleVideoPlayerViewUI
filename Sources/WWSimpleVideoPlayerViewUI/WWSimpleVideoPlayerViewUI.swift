@@ -8,10 +8,10 @@
 import AVKit
 import SwiftUI
 
-public struct WWSimpleVideoPlayerViewUI: View {
+public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View {
     
-    @Binding var url: URL                                           // 影片資源的 URL
-    @Binding var isAutoplay: Bool                                   // 是否自動播放
+    @Binding private var source: T                                  // 影片資源的 URL
+    @Binding private var isAutoplay: Bool                           // 是否自動播放
     
     @State private var manager = VideoPlayerManager()               // 影片播放器管理器（包含 AVPlayer、縮圖生成器等）
     
@@ -43,10 +43,10 @@ public struct WWSimpleVideoPlayerViewUI: View {
                         .opacity(0.01)
                 }
             }.task {
-                initPlayer(url: url)
+                initPlayer(url: source.url)
                 initConfigure()
             }
-            .onChange(of: url) { _, newUrl in
+            .onChange(of: source.url) { _, newUrl in
                 initPlayer(url: newUrl)
                 initConfigure()
             }
@@ -67,10 +67,10 @@ public struct WWSimpleVideoPlayerViewUI: View {
     /// - 使用 `hudOverlayView` 顯示 HUD（亮度條、音量條、進度條等）
     /// Description
     /// - Parameters:
-    ///   - url: 影片資源的 URL
+    ///   - source: 影片資源
     ///   - isAutoplay: 是否自動播放
-    public init(url: Binding<URL>, isAutoplay: Binding<Bool>) {
-        _url = url
+    public init(source: Binding<T>, isAutoplay: Binding<Bool>) {
+        _source = source
         _isAutoplay = isAutoplay
     }
 }
@@ -381,15 +381,4 @@ private extension WWSimpleVideoPlayerViewUI {
         case .center: return
         }
     }
-}
-
-#Preview {
-    
-    @Previewable
-    @State var isAutoplay = true
-    
-    @Previewable
-    @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
-    
-    WWSimpleVideoPlayerViewUI(url: $url, isAutoplay: $isAutoplay)
 }

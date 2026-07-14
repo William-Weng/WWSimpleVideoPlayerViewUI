@@ -15,29 +15,10 @@ https://github.com/user-attachments/assets/76af5bec-385c-482f-9437-22f6fb6d2826
 
 ## 🧩 Introduction
 
-- Uses SwiftUI's `VideoPlayer` to display the built-in system playback controls. [web:26]
-- Under the hood, it uses `AVPlayer` to play local or remote media. [web:27]
-- Accepts `Binding<URL>` and `Binding<Bool>` for the video source and autoplay behavior. [web:26]
-- Supports changing the video source during playback, e.g., switching between different `.mp4` or HLS URLs. [web:27]
-
-```swift
-import SwiftUI
-import WWSimpleVideoPlayerViewUI
-
-struct ContentView: View {
-    @State var isAutoplay = true
-    @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
-
-    var body: some View {
-        WWSimpleVideoPlayerViewUI(url: $url, isAutoplay: $isAutoplay)
-    }
-}
-
-#Preview {
-    ContentView()
-}
-```
-
+- Uses SwiftUI's `VideoPlayer` to display the built-in system playback controls.
+- Under the hood, it uses `AVPlayer` to play local or remote media.
+- Accepts `Binding<URL>` and `Binding<Bool>` for the video source and autoplay behavior.
+- Supports changing the video source during playback, e.g., switching between different `.mp4` or HLS URLs.
 
 ## 📦 Installation
 
@@ -56,13 +37,13 @@ File → Add Packages → https://github.com/William-Weng/WWSimpleVideoPlayerVie
 ## ✨ Features
 
 - Built with the native `VideoPlayer`, which provides play, pause, volume, progress bar, and fullscreen controls out of the box.
-- Video source can be changed dynamically via an external `Binding<URL>`.
+- Video source can be changed dynamically via an external `Binding<WWSimpleVideoPlayerDataSource>`.
 - Autoplay behavior can be controlled via a `Binding<Bool>`.
 - Supports both local resources and remote video playback.
 
 ### Parameters
 
-- `url`: `Binding` to the video source URL.
+- `source`: `Binding` to the video source URL.
 - `isAutoplay`: `Binding` to control whether playback starts automatically.
 
 ## 🚀 Examples
@@ -74,35 +55,25 @@ import SwiftUI
 import WWSimpleVideoPlayerViewUI
 
 struct ContentView: View {
+    
     @State var isAutoplay = true
-    @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
-
+    @State var source: ShortVideo = .init(url: .init(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!)
+    
     var body: some View {
-        WWSimpleVideoPlayerViewUI(url: $url, isAutoplay: $isAutoplay)
+        WWSimpleVideoPlayerViewUI<ShortVideo>(source: $source, isAutoplay: $isAutoplay)
+            .frame(maxWidth: .infinity)
     }
 }
-```
 
-### Switching Video
-
-```swift
-import SwiftUI
-import WWSimpleVideoPlayerViewUI
-
-struct ContentView: View {
-    @State var isAutoplay = true
-    @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
-
-    var body: some View {
-        VStack {
-            WWSimpleVideoPlayerViewUI(url: $url, isAutoplay: $isAutoplay)
-                .frame(maxWidth: 400)
-                .aspectRatio(16 / 9, contentMode: .fit)
-
-            Button("Load another video") {
-                url = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")!
-            }
-        }
-    }
+struct ShortVideo: WWSimpleVideoPlayerDataSource {
+    
+    let id: UUID = .init()
+    var url: URL
 }
+
+#Preview {
+    ContentView()
+}
+
 ```
+

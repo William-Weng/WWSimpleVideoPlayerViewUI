@@ -19,25 +19,6 @@ https://github.com/user-attachments/assets/76af5bec-385c-482f-9437-22f6fb6d2826
 - 背後使用 `AVPlayer` 來播放本地或網路影片。
 - 使用 `Binding<URL>` 與 `Binding<Bool>` 接收外部影片來源與是否自動播放。
 - 支援在播放過程中更換影片來源，例如切換不同的 .mp4 或 HLS 網址。
-```
-
-import SwiftUI
-import WWSimpleVideoPlayerViewUI
-
-struct ContentView: View {
-
-    @State var isAutoplay = true
-    @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
-
-    var body: some View {
-        WWSimpleVideoPlayerViewUI(url: $url, isAutoplay: $isAutoplay)
-    }
-}
-
-#Preview {
-    ContentView()
-}
-```
 
 ## 📦 安裝方式
 
@@ -56,13 +37,13 @@ File → Add Packages → https://github.com/William-Weng/WWSimpleVideoPlayerVie
 ## ✨ 功能
 
 - 使用原生 `VideoPlayer`，自帶播放、暫停、音量、進度條與全屏控制。
-- 可透過外部 `Binding<URL>` 動態更換影片來源。
+- 可透過外部 `Binding<WWSimpleVideoPlayerDataSource>` 動態更換影片來源。
 - 可透過 `Binding<Bool>` 控制是否自動播放。
 - 支援本地資源與遠端影片播放。
 
 ### 參數
 
-- `url`: 影片來源 URL 的 `Binding`。
+- `source`: 影片來源 URL 的 `Binding`。
 - `isAutoplay`: 是否自動播放的 `Binding`。
 
 ## 🚀 範例
@@ -74,36 +55,23 @@ import SwiftUI
 import WWSimpleVideoPlayerViewUI
 
 struct ContentView: View {
+    
     @State var isAutoplay = true
-    @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
-
+    @State var source: ShortVideo = .init(url: .init(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!)
+    
     var body: some View {
-        WWSimpleVideoPlayerViewUI(url: $url, isAutoplay: $isAutoplay)
+        WWSimpleVideoPlayerViewUI<ShortVideo>(source: $source, isAutoplay: $isAutoplay)
+            .frame(maxWidth: .infinity)
     }
 }
-```
 
-### 切換影片
+struct ShortVideo: WWSimpleVideoPlayerDataSource {
+    
+    let id: UUID = .init()
+    var url: URL
+}
 
-```swift
-import SwiftUI
-import WWSimpleVideoPlayerViewUI
-
-struct ContentView: View {
-
-    @State var isAutoplay = true
-    @State var url = URL(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!
-
-    var body: some View {
-        VStack {
-            WWSimpleVideoPlayerViewUI(url: $url, isAutoplay: $isAutoplay)
-                .frame(maxWidth: 400)
-                .aspectRatio(16 / 9, contentMode: .fit)
-
-            Button("切換其他影片") {
-                url = URL(string: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")!
-            }
-        }
-    }
+#Preview {
+    ContentView()
 }
 ```
