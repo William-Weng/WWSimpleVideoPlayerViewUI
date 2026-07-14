@@ -36,10 +36,11 @@ File → Add Packages → https://github.com/William-Weng/WWSimpleVideoPlayerVie
 
 ## ✨ Features
 
-- Built with the native `VideoPlayer`, which provides play, pause, volume, progress bar, and fullscreen controls out of the box.
-- Video source can be changed dynamically via an external `Binding<WWSimpleVideoPlayerDataSource>`.
-- Autoplay behavior can be controlled via a `Binding<Bool>`.
-- Supports both local resources and remote video playback.
+- Integrates a `UIKit-based` player into `SwiftUI` for fully customized playback controls.
+- Supports play, pause, scrubber seeking, and gesture-based volume and brightness adjustment.
+- Allows dynamic video source switching via `Binding<WWSimpleVideoPlayerDataSource>`.
+- Supports autoplay control via `Binding<Bool>`.
+- Works with both local files and remote video sources.
 
 ### Parameters
 
@@ -74,6 +75,5 @@ struct ShortVideo: WWSimpleVideoPlayerDataSource {
 #Preview {
     ContentView()
 }
-
 ```
 

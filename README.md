@@ -36,10 +36,11 @@ File → Add Packages → https://github.com/William-Weng/WWSimpleVideoPlayerVie
 
 ## ✨ 功能
 
-- 使用原生 `VideoPlayer`，自帶播放、暫停、音量、進度條與全屏控制。
-- 可透過外部 `Binding<WWSimpleVideoPlayerDataSource>` 動態更換影片來源。
-- 可透過 `Binding<Bool>` 控制是否自動播放。
-- 支援本地資源與遠端影片播放。
+- 使用 `UIKit` 播放器整合到 `SwiftUI`，實作完整自訂播放控制。
+- 支援播放、暫停、拖曳進度條、音量與亮度手勢調整。
+- 可透過 `Binding<WWSimpleVideoPlayerDataSource>` 即時切換影片來源。
+- 可透過 `Binding<Bool>` 控制自動播放行為。
+- 支援本地檔案與遠端影片來源。
 
 ### 參數
 

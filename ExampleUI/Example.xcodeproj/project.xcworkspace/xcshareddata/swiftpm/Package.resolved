@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/William-Weng/WWSimpleVideoPlayerViewUI",
       "state" : {
-        "revision" : "4f745cfd35a3052abb7f59bdf6103fbbe1029105",
-        "version" : "1.0.0"
+        "revision" : "cdb978286e7947025d85a8366bf4e6578a32af59",
+        "version" : "1.1.0"
       }
     }
   ],

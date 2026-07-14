@@ -8,6 +8,7 @@
 import AVKit
 import SwiftUI
 
+// 簡易影片播放器視圖
 public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View {
     
     @Binding private var source: T                                  // 影片資源的 URL
@@ -23,8 +24,8 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
     
     @State private var showHUD: Bool = false                        // 是否顯示 HUD 視窗
     @State private var hudType: HUDType = .brightness               // 當前 HUD 類型（亮度 / 音量 / 進度）
-    @State private var hudTimer: Timer? = nil                       // HUD 自動關閉計時器
-    
+    @State private var hudResetTask: Task<Void, Never>?
+        
     @State private var currentDirection: DragDirection = .unknown   // 當前拖動方向（水平 / 垂直 / 未知）
     
     public var body: some View {
@@ -33,14 +34,12 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
             
             VStack {
                 ZStack {
-                    VideoPlayer(player: manager.player)
-                        .contentShape(Rectangle())
-                        .highPriorityGesture(videoDragGesture(screenWidth: geometry.size.width))
+                    AVPlayerView(player: manager.player, showsControls: false)
                         .ignoresSafeArea()
+                    controlView(geometry: geometry)
                     hudOverlayView
-                    HiddenVolumeView()
-                        .frame(width: 1, height: 1)
-                        .opacity(0.01)
+                        .allowsHitTesting(false)
+                    hiddenVolumeView
                 }
             }.task {
                 initPlayer(url: source.url)
@@ -51,8 +50,8 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
                 initConfigure()
             }
             .onDisappear {
-                hudTimer?.invalidate()
-                hudTimer = nil
+                hudResetTask?.cancel()
+                hudResetTask = nil
             }
         }
     }
@@ -126,12 +125,13 @@ private extension WWSimpleVideoPlayerViewUI {
     ///
     /// 使用 `hudIcon`（例如 "brightness.up" / "volume"）來顯示對應圖示
     var iconView: some View {
+        
         Image(systemName: hudIcon)
             .font(.system(size: 20))
             .foregroundColor(.white)
             .contentTransition(.symbolEffect(.replace))
     }
-        
+    
     /// 亮度 / 音量進度條視圖
     ///
     /// 使用 `GeometryReader` 取得父容器寬度，然後根據：
@@ -149,6 +149,47 @@ private extension WWSimpleVideoPlayerViewUI {
                     .frame(width: geometry.size.width * CGFloat(hudType == .brightness ? brightness : volume))
             }
         }
+    }
+    
+    /// 隱藏系統音量HUD用
+    var hiddenVolumeView: some View {
+        
+        HiddenVolumeView()
+            .frame(width: 1, height: 1)
+            .opacity(0.01)
+    }
+}
+
+// MARK: - 子視圖
+private extension WWSimpleVideoPlayerViewUI {
+    
+    /// 播放器控制互動區
+    /// - 透明背景，但可接收點擊與拖曳手勢
+    /// - 點擊：切換播放 / 暫停
+    /// - 拖曳：進行影片 seek
+    /// - 底部：顯示自訂進度條
+    func controlView(geometry: GeometryProxy) -> some View {
+        
+        ZStack {
+            Color.clear
+                .contentShape(Rectangle())
+                .gesture(videoTapGesture())
+                .highPriorityGesture(videoDragGesture(screenWidth: geometry.size.width))
+            
+            VStack {
+                Spacer()
+                VideoProgressBar(currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime) { seek in
+                    manager.seek(to: seek)
+                }
+            }
+            
+            if !manager.isPlaying {
+                playPauseHUDView
+                    .transition(.opacity.combined(with: .scale))
+                    .allowsHitTesting(false)
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: manager.isPlaying)
     }
 }
 
@@ -206,6 +247,30 @@ private extension WWSimpleVideoPlayerViewUI {
     }
 }
 
+// MARK: - 點擊手勢
+private extension WWSimpleVideoPlayerViewUI {
+    
+    @ViewBuilder
+    private var playPauseHUDView: some View {
+        
+        Image(systemName: "play.fill")
+            .font(.system(size: 64, weight: .semibold))
+            .foregroundStyle(.white)
+            .padding(36)
+            .background(.black.opacity(0.35))
+            .clipShape(Circle())
+            .transition(.opacity.combined(with: .scale))
+    }
+    
+    /// 點一下畫面時切換播放 / 暫停
+    /// - Returns: 可直接掛在 view 上的 TapGesture
+    func videoTapGesture() -> some Gesture {
+        
+        TapGesture(count: 2)
+            .onEnded { manager.isPlaying ? manager.pause() : manager.play() }
+    }
+}
+
 // MARK: - 拖動手勢
 private extension WWSimpleVideoPlayerViewUI {
     
@@ -241,7 +306,6 @@ private extension WWSimpleVideoPlayerViewUI {
         guard currentDirection == .vertical else { return }
         
         showHUD = true
-        hudTimer?.invalidate()
         
         switch currentDirection {
         case .vertical: verticalDirectionAction(screenWidth: screenWidth, value: value)
@@ -264,14 +328,18 @@ private extension WWSimpleVideoPlayerViewUI {
         baseVolume = volume
         currentDirection = .unknown
         
-        hudTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
+        hudResetTask?.cancel()
+        hudResetTask = Task { @MainActor in
+            
+            try? await Task.sleep(for: .seconds(1.0))
+            guard !Task.isCancelled else { return }
             
             showHUD = false
             
-            Task { @MainActor in
-                try? await Task.sleep(for: .seconds(0.2))
-                hudType = .brightness
-            }
+            try? await Task.sleep(for: .seconds(0.2))
+            guard !Task.isCancelled else { return }
+            
+            hudType = .brightness
         }
     }
 }

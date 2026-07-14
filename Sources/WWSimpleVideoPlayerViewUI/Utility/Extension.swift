@@ -7,6 +7,21 @@
 
 import AVKit
 
+extension TimeInterval {
+    
+    /// 將秒數格式化成 mm:ss (例如：65.2 -> 1:05)
+    func formatTime() -> String {
+        
+        guard isFinite else { return "0:00" }
+        
+        let total = Int(rounded())
+        let minutes = total / 60
+        let seconds: Int = total % 60
+        
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+}
+
 // MARK: - AVPlayer
 extension AVPlayer {
     

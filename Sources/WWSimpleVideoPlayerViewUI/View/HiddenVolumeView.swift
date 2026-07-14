@@ -12,7 +12,7 @@ import MediaPlayer
 struct HiddenVolumeView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> MPVolumeView {
-        MPVolumeView(frame: .zero)
+        .init(frame: .zero)
     }
     
     func updateUIView(_ uiView: MPVolumeView, context: Context) {}
