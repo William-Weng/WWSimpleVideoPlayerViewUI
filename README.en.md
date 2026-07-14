@@ -9,13 +9,13 @@
 ![SPM](https://img.shields.io/badge/SPM-supported-brightgreen.svg)
 [![LICENSE](https://img.shields.io/badge/LICENSE-MIT-yellow.svg?style=flat)](https://developer.apple.com/swift/)
 
-A lightweight video player view built on top of Apple's `VideoPlayer` and `AVPlayer`.
+A lightweight video player view built on top of Apple's `AVPlayerViewController` and `AVPlayer`.
 
-https://github.com/user-attachments/assets/76af5bec-385c-482f-9437-22f6fb6d2826
+https://github.com/user-attachments/assets/6e75df35-3fad-4a34-94f6-fb1811598fb4
 
 ## 🧩 Introduction
 
-- Uses SwiftUI's `VideoPlayer` to display the built-in system playback controls.
+- Uses UIKit's `AVPlayerViewController` to display the built-in system playback controls.
 - Under the hood, it uses `AVPlayer` to play local or remote media.
 - Accepts `Binding<URL>` and `Binding<Bool>` for the video source and autoplay behavior.
 - Supports changing the video source during playback, e.g., switching between different `.mp4` or HLS URLs.

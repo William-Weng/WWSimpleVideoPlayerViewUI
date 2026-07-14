@@ -9,13 +9,13 @@
 ![SPM](https://img.shields.io/badge/SPM-supported-brightgreen.svg)
 [![LICENSE](https://img.shields.io/badge/LICENSE-MIT-yellow.svg?style=flat)](https://developer.apple.com/swift/)
 
-根據 Apple 的 `VideoPlayer` 與 `AVPlayer` 所開發的輕量影片播放器。
+根據 Apple 的 `AVPlayerViewController` 與 `AVPlayer` 所開發的輕量影片播放器。
 
-https://github.com/user-attachments/assets/76af5bec-385c-482f-9437-22f6fb6d2826
+https://github.com/user-attachments/assets/6e75df35-3fad-4a34-94f6-fb1811598fb4
 
 ## 🧩 簡介
 
-- 使用 SwiftUI 的 `VideoPlayer`，直接展示系統內建的播放控制器。
+- 使用 UIKit 的 `AVPlayerViewController`，直接展示系統內建的播放控制器。
 - 背後使用 `AVPlayer` 來播放本地或網路影片。
 - 使用 `Binding<URL>` 與 `Binding<Bool>` 接收外部影片來源與是否自動播放。
 - 支援在播放過程中更換影片來源，例如切換不同的 .mp4 或 HLS 網址。
