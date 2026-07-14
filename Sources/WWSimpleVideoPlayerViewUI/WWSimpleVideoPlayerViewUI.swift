@@ -28,6 +28,8 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
         
     @State private var currentDirection: DragDirection = .unknown   // 當前拖動方向（水平 / 垂直 / 未知）
     
+    private let thumb: Image
+    
     public var body: some View {
         
         GeometryReader { geometry in
@@ -66,11 +68,13 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
     /// - 使用 `hudOverlayView` 顯示 HUD（亮度條、音量條、進度條等）
     /// Description
     /// - Parameters:
-    ///   - source: 影片資源
-    ///   - isAutoplay: 是否自動播放
-    public init(source: Binding<T>, isAutoplay: Binding<Bool>) {
+    ///   - source: 影片來源的雙向綁定，可讓外部動態更新影片資料
+    ///   - isAutoplay: 是否自動播放的雙向綁定
+    ///   - thumb: 進度條拖曳圓點使用的圖片，預設為白色圓點圖示
+    public init(source: Binding<T>, isAutoplay: Binding<Bool>, thumb: Image = Image(systemName: "circle.fill")) {
         _source = source
         _isAutoplay = isAutoplay
+        self.thumb = thumb
     }
 }
 
@@ -178,7 +182,7 @@ private extension WWSimpleVideoPlayerViewUI {
             
             VStack {
                 Spacer()
-                VideoProgressBar(currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime) { seek in
+                VideoProgressBar(currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime, thumb: thumb) { seek in
                     manager.seek(to: seek)
                 }
             }

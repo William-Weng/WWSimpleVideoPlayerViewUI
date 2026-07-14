@@ -7,6 +7,7 @@
 
 import AVKit
 
+// MARK: - TimeInterval
 extension TimeInterval {
     
     /// 將秒數格式化成 mm:ss (例如：65.2 -> 1:05)

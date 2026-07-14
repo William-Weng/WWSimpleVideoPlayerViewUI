@@ -10,11 +10,13 @@ import WWSimpleVideoPlayerViewUI
 
 struct ContentView: View {
     
+    private let thumb: Image = Image("thumb")
+    
     @State var isAutoplay = true
     @State var source: ShortVideo = .init(url: .init(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!)
     
     var body: some View {
-        WWSimpleVideoPlayerViewUI<ShortVideo>(source: $source, isAutoplay: $isAutoplay)
+        WWSimpleVideoPlayerViewUI<ShortVideo>(source: $source, isAutoplay: $isAutoplay, thumb: thumb)
             .frame(maxWidth: .infinity)
     }
 }

@@ -47,7 +47,7 @@ struct VideoProgressBar: View {
         .clipShape(RoundedRectangle(cornerRadius: thumbSize))
     }
     
-    init(currentTime: TimeInterval, duration: TimeInterval, bufferedTime: TimeInterval, thumb: Image = Image(systemName: "circle.fill"), onSeek: @escaping (TimeInterval) -> Void) {
+    init(currentTime: TimeInterval, duration: TimeInterval, bufferedTime: TimeInterval, thumb: Image, onSeek: @escaping (TimeInterval) -> Void) {
         
         self.currentTime = currentTime
         self.duration = duration
