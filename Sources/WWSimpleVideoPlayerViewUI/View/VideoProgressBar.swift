@@ -7,14 +7,16 @@
 
 import SwiftUI
 
+// 自定義影片播放進度條
 struct VideoProgressBar: View {
     
-    let currentTime: TimeInterval       // 目前播放時間（秒）
-    let duration: TimeInterval          // 影片總長度（秒）
-    let bufferedTime: TimeInterval      // 已緩衝到的時間（秒）
-    
-    let onSeek: (TimeInterval) -> Void  // 拖曳結束後回傳目標秒數
+    let currentTime: TimeInterval
+    let duration: TimeInterval
+    let bufferedTime: TimeInterval
     let thumb: Image
+
+    let onChanged: (TimeInterval) -> Void
+    let onEnded: (TimeInterval) -> Void
     
     private let thumbSize: CGFloat = 14
 
@@ -47,13 +49,22 @@ struct VideoProgressBar: View {
         .clipShape(RoundedRectangle(cornerRadius: thumbSize))
     }
     
-    init(currentTime: TimeInterval, duration: TimeInterval, bufferedTime: TimeInterval, thumb: Image, onSeek: @escaping (TimeInterval) -> Void) {
+    /// 初始化播放進度條
+    /// - Parameters:
+    ///   - currentTime: 目前播放時間（秒）
+    ///   - duration: 影片總長度（秒）
+    ///   - bufferedTime: 已緩衝到的時間（秒）
+    ///   - thumb: 進度條拖曳圓點使用的圖片
+    ///   - onChanged: 拖曳時回傳目標秒數
+    ///   - onEnded: 拖曳結束後回傳目標秒數
+    init(currentTime: TimeInterval, duration: TimeInterval, bufferedTime: TimeInterval, thumb: Image, onChanged: @escaping (TimeInterval) -> Void, onEnded: @escaping (TimeInterval) -> Void) {
         
         self.currentTime = currentTime
         self.duration = duration
         self.bufferedTime = bufferedTime
         self.thumb = thumb
-        self.onSeek = onSeek
+        self.onChanged = onChanged
+        self.onEnded = onEnded
     }
 }
 
@@ -147,6 +158,7 @@ private extension VideoProgressBar {
         
         isDragging = true
         dragValue = duration * point
+        onChanged(dragValue)
     }
     
     /// 拖曳結束後執行 seek
@@ -160,6 +172,6 @@ private extension VideoProgressBar {
         
         isDragging = false
         dragValue = target
-        onSeek(target)
+        onEnded(target)
     }
 }

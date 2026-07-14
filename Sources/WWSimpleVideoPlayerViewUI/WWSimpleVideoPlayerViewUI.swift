@@ -11,8 +11,10 @@ import SwiftUI
 // 簡易影片播放器視圖
 public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View {
     
-    @Binding private var source: T                                  // 影片資源的 URL
-    @Binding private var isAutoplay: Bool                           // 是否自動播放
+    private let thumb: Image
+    
+    @Binding private var source: T
+    @Binding private var isAutoplay: Bool
     
     @State private var manager = VideoPlayerManager()               // 影片播放器管理器（包含 AVPlayer、縮圖生成器等）
     
@@ -24,11 +26,12 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
     
     @State private var showHUD: Bool = false                        // 是否顯示 HUD 視窗
     @State private var hudType: HUDType = .brightness               // 當前 HUD 類型（亮度 / 音量 / 進度）
-    @State private var hudResetTask: Task<Void, Never>?
+    @State private var hudResetTask: Task<Void, Never>?             // 用於管理 HUD（例如 play/pause 圖標）的自動隱藏重置任務
         
-    @State private var currentDirection: DragDirection = .unknown   // 當前拖動方向（水平 / 垂直 / 未知）
+    @State private var showProgress: Bool = false                   // 是否顯示進度條
+    @State private var progressResetTask: Task<Void, Never>?        // 用於管理進度條（progressBar）的自動隱藏重置任務
     
-    private let thumb: Image
+    @State private var currentDirection: DragDirection = .unknown   // 當前拖動方向（水平 / 垂直 / 未知）
     
     public var body: some View {
         
@@ -52,8 +55,7 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
                 initConfigure()
             }
             .onDisappear {
-                hudResetTask?.cancel()
-                hudResetTask = nil
+                onDisappearAction()
             }
         }
     }
@@ -177,23 +179,38 @@ private extension WWSimpleVideoPlayerViewUI {
         ZStack {
             Color.clear
                 .contentShape(Rectangle())
-                .gesture(videoTapGesture())
+                .gesture(videoDoubleTapGesture())
+                .gesture(videoOneTapGesture())
                 .highPriorityGesture(videoDragGesture(screenWidth: geometry.size.width))
-            
-            VStack {
-                Spacer()
-                VideoProgressBar(currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime, thumb: thumb) { seek in
-                    manager.seek(to: seek)
-                }
-            }
-            
+
             if !manager.isPlaying {
                 playPauseHUDView
+                    .id("playPauseHUDView")
                     .transition(.opacity.combined(with: .scale))
                     .allowsHitTesting(false)
             }
+            
+            progressView
+                .id("progressBar")
+                .opacity(showProgress ? 1 : 0)
         }
+        .animation(.easeInOut(duration: 0.2), value: showProgress)
         .animation(.easeInOut(duration: 0.2), value: manager.isPlaying)
+    }
+    
+    /// 影片底部的進度條視圖
+    var progressView: some View {
+        
+        VStack {
+            Spacer()
+            VideoProgressBar(currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime, thumb: thumb) { seek in
+                progressResetTask?.cancel()
+                progressResetTask = nil
+            } onEnded: { seek in
+                manager.seek(to: seek)
+                showProgressBarWithAutoHide()
+            }
+        }
     }
 }
 
@@ -249,11 +266,20 @@ private extension WWSimpleVideoPlayerViewUI {
         volume = currentVolume
         baseVolume = currentVolume
     }
+    
+    /// 畫面消失後要處理的事件
+    func onDisappearAction() {
+        hudResetTask?.cancel()
+        hudResetTask = nil
+        progressResetTask?.cancel()
+        progressResetTask = nil
+    }
 }
 
 // MARK: - 點擊手勢
 private extension WWSimpleVideoPlayerViewUI {
     
+    /// 暫停播放圖示
     @ViewBuilder
     private var playPauseHUDView: some View {
         
@@ -266,12 +292,36 @@ private extension WWSimpleVideoPlayerViewUI {
             .transition(.opacity.combined(with: .scale))
     }
     
-    /// 點一下畫面時切換播放 / 暫停
+    /// 點一下畫面時顯示進度條
+    func videoOneTapGesture() -> some Gesture {
+        
+        TapGesture(count: 1)
+            .onEnded {
+                showProgress = true
+                showProgressBarWithAutoHide()
+            }
+    }
+    
+    /// 點兩下畫面時切換播放 / 暫停
     /// - Returns: 可直接掛在 view 上的 TapGesture
-    func videoTapGesture() -> some Gesture {
+    func videoDoubleTapGesture() -> some Gesture {
         
         TapGesture(count: 2)
             .onEnded { manager.isPlaying ? manager.pause() : manager.play() }
+    }
+    
+    /// 顯示進度條 (會自動消失)
+    func showProgressBarWithAutoHide() {
+        
+        progressResetTask?.cancel()
+        
+        progressResetTask = Task { @MainActor in
+            
+            try? await Task.sleep(for: .seconds(1.5))
+            guard !Task.isCancelled else { return }
+            
+            showProgress = false
+        }
     }
 }
 
