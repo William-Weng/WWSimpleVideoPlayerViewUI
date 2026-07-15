@@ -1,6 +1,6 @@
 [English](./README.en.md) | [繁體中文](./README.md)
 
-# 🎬 WWSimpleVideoPlayerViewUI
+# WWSimpleVideoPlayerViewUI
 
 [![Swift-5.10+](https://img.shields.io/badge/Swift-5.10+-orange.svg)](https://developer.apple.com/swift/)
 [![iOS-17.0+](https://img.shields.io/badge/iOS-17.0+-pink.svg?style=flat)](https://developer.apple.com/swift/)
@@ -13,7 +13,7 @@
 
 https://github.com/user-attachments/assets/669d3119-15f6-448a-a61d-668afe4a6444
 
-## 🧩 簡介
+## 🎬 簡介
 
 - 使用 UIKit 的 `AVPlayerViewController`，直接展示系統內建的播放控制器。
 - 背後使用 `AVPlayer` 來播放本地或網路影片。
@@ -42,10 +42,13 @@ File → Add Packages → https://github.com/William-Weng/WWSimpleVideoPlayerVie
 - 可透過 `Binding<Bool>` 控制自動播放行為。
 - 支援本地檔案與遠端影片來源。
 
-### 參數
+## 🧩 可用參數
 
-- `source`: 影片來源 URL 的 `Binding`。
-- `isAutoplay`: 是否自動播放的 `Binding`。
+| 方法 | 說明 |
+|---|---|
+| `source` | 影片來源 URL 的 `Binding`。 |
+| `isAutoplay` | 是否自動播放的 `Binding`。 |
+| `configure` | 進度條的`樣式`與`顏色`配置設定。 |
 
 ## 🚀 範例
 
@@ -57,11 +60,13 @@ import WWSimpleVideoPlayerViewUI
 
 struct ContentView: View {
     
+    private let configure: WWSimpleVideoPlayerConfigure = .init(thumb: Image("thumb"), mainColor: .mint)
+    
     @State var isAutoplay = true
     @State var source: ShortVideo = .init(url: .init(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!)
     
     var body: some View {
-        WWSimpleVideoPlayerViewUI<ShortVideo>(source: $source, isAutoplay: $isAutoplay)
+        WWSimpleVideoPlayerViewUI<ShortVideo>(source: $source, isAutoplay: $isAutoplay, configure: configure)
             .frame(maxWidth: .infinity)
     }
 }

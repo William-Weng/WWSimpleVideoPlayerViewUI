@@ -11,7 +11,7 @@ import SwiftUI
 // 簡易影片播放器視圖
 public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View {
     
-    private let thumb: Image
+    private let configure: WWSimpleVideoPlayerConfigure
     
     @Binding private var source: T
     @Binding private var isAutoplay: Bool
@@ -72,11 +72,11 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
     /// - Parameters:
     ///   - source: 影片來源的雙向綁定，可讓外部動態更新影片資料
     ///   - isAutoplay: 是否自動播放的雙向綁定
-    ///   - thumb: 進度條拖曳圓點使用的圖片，預設為白色圓點圖示
-    public init(source: Binding<T>, isAutoplay: Binding<Bool>, thumb: Image = Image(systemName: "circle.fill")) {
+    ///   - configure: 進度條相關設定
+    public init(source: Binding<T>, isAutoplay: Binding<Bool>, configure: WWSimpleVideoPlayerConfigure = .default) {
         _source = source
         _isAutoplay = isAutoplay
-        self.thumb = thumb
+        self.configure = configure
     }
 }
 
@@ -203,7 +203,7 @@ private extension WWSimpleVideoPlayerViewUI {
         
         VStack {
             Spacer()
-            VideoProgressBar(currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime, thumb: thumb) { seek in
+            VideoProgressBar(currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime, configure: configure) { seek in
                 progressResetTask?.cancel()
                 progressResetTask = nil
             } onEnded: { seek in
