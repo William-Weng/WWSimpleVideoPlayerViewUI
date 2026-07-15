@@ -14,14 +14,14 @@ struct VideoProgressBar: View {
     let duration: TimeInterval
     let bufferedTime: TimeInterval
     let configure: WWSimpleVideoPlayerConfigure
-
-    let onChanged: (TimeInterval) -> Void
-    let onEnded: (TimeInterval) -> Void
     
-    private let thumbSize: CGFloat = 14
-
-    @State private var isDragging = false
-    @State private var dragValue: Double = 0
+    private let thumbSize: CGFloat = 14                             // 進度條移動點的大小
+    
+    private var onChangedAction: ((TimeInterval) -> Void)? = nil    // 拖曳時回傳目標秒數
+    private var onEndedAction: ((TimeInterval) -> Void)? = nil      // 拖曳結束後回傳目標秒數
+    
+    @State private var isDragging = false                           // 記錄是否正在拖動
+    @State private var dragValue: Double = 0                        // 拖動時的數值
     
     var body: some View {
         
@@ -55,16 +55,30 @@ struct VideoProgressBar: View {
     ///   - duration: 影片總長度（秒）
     ///   - bufferedTime: 已緩衝到的時間（秒）
     ///   - configure: 進度條相關設定
-    ///   - onChanged: 拖曳時回傳目標秒數
-    ///   - onEnded: 拖曳結束後回傳目標秒數
-    init(currentTime: TimeInterval, duration: TimeInterval, bufferedTime: TimeInterval, configure: WWSimpleVideoPlayerConfigure, onChanged: @escaping (TimeInterval) -> Void, onEnded: @escaping (TimeInterval) -> Void) {
+    init(currentTime: TimeInterval, duration: TimeInterval, bufferedTime: TimeInterval, configure: WWSimpleVideoPlayerConfigure) {
         
         self.currentTime = currentTime
         self.duration = duration
         self.bufferedTime = bufferedTime
         self.configure = configure
-        self.onChanged = onChanged
-        self.onEnded = onEnded
+    }
+}
+
+// MARK: - SwiftUI 風格的 Modify 擴充 (Extensions)
+extension VideoProgressBar {
+    
+    /// 監聽進度條拖曳中的狀態變更
+    func onChanged(_ action: @escaping (TimeInterval) -> Void) -> Self {
+        var copy = self
+        copy.onChangedAction = action
+        return copy
+    }
+    
+    /// 監聽進度條拖曳結束的事件
+    func onEnded(_ action: @escaping (TimeInterval) -> Void) -> Self {
+        var copy = self
+        copy.onEndedAction = action
+        return copy
     }
 }
 
@@ -158,7 +172,7 @@ private extension VideoProgressBar {
         
         isDragging = true
         dragValue = duration * point
-        onChanged(dragValue)
+        onChangedAction?(dragValue)
     }
     
     /// 拖曳結束後執行 seek
@@ -172,6 +186,6 @@ private extension VideoProgressBar {
         
         isDragging = false
         dragValue = target
-        onEnded(target)
+        onEndedAction?(target)
     }
 }
