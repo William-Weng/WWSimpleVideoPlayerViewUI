@@ -11,7 +11,7 @@
 
 A lightweight video player view built on top of Apple's `AVPlayerViewController` and `AVPlayer`.
 
-https://github.com/user-attachments/assets/669d3119-15f6-448a-a61d-668afe4a6444
+https://github.com/user-attachments/assets/dc2cf9fb-852f-401d-b7e0-9422e2ce4277
 
 ## 🎬 Introduction
 
