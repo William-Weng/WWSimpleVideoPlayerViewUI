@@ -203,15 +203,15 @@ private extension WWSimpleVideoPlayerViewUI {
         
         VStack {
             Spacer()
-            
-            VideoProgressBar(currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime, configure: configure)
+                        
+            VideoProgressBar(url: source.url, currentTime: manager.currentTime, duration: manager.duration, bufferedTime: manager.bufferedTime, configure: configure)
                 .onChanged { seek in
                     progressResetTask?.cancel()
                     progressResetTask = nil
                 }
                 .onEnded { seek in
                     manager.seek(to: seek)
-                   showProgressBarWithAutoHide()
+                    showProgressBarWithAutoHide()
                 }
         }
     }

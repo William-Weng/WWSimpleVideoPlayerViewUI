@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 // 自定義影片播放進度條
 struct VideoProgressBar: View {
     
+    let asset: AVAsset
     let currentTime: TimeInterval
     let duration: TimeInterval
     let bufferedTime: TimeInterval
@@ -22,41 +24,58 @@ struct VideoProgressBar: View {
     
     @State private var isDragging = false                           // 記錄是否正在拖動
     @State private var dragValue: Double = 0                        // 拖動時的數值
+    @State private var thumbnailProvider = VideoThumbnailProvider()
     
     var body: some View {
         
-        HStack(spacing: 8) {
+        VStack(spacing: 6) {
             
-            timeTextView(displayTime)
-                .frame(width: 36, alignment: .leading)
-            
-            GeometryReader { geometry in
-                
-                let width = geometry.size.width
-                
-                progressView(width: width)
-                    .contentShape(Rectangle())
-                    .gesture(progressDragGesture(width: width))
+            if isDragging, let image = thumbnailProvider.previewImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 120, height: 68)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
-            .frame(height: thumbSize)
             
-            timeTextView(duration)
-                .frame(width: 36, alignment: .trailing)
+            HStack(spacing: 8) {
+                
+                timeTextView(displayTime)
+                    .frame(width: 36, alignment: .leading)
+                
+                GeometryReader { geometry in
+                    
+                    let width = geometry.size.width
+                    
+                    progressView(width: width)
+                        .contentShape(Rectangle())
+                        .gesture(progressDragGesture(width: width))
+                }
+                .frame(height: thumbSize)
+                
+                timeTextView(duration)
+                    .frame(width: 36, alignment: .trailing)
+            }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .background(.black.opacity(0.4))
         .clipShape(RoundedRectangle(cornerRadius: thumbSize))
+        .task(id: duration) {
+            await thumbnailProvider.prepare(asset: asset, size: configure.thumbnailSize)
+        }
     }
     
     /// 初始化播放進度條
     /// - Parameters:
+    ///   - url: 影片URL地址
     ///   - currentTime: 目前播放時間（秒）
     ///   - duration: 影片總長度（秒）
     ///   - bufferedTime: 已緩衝到的時間（秒）
     ///   - configure: 進度條相關設定
-    init(currentTime: TimeInterval, duration: TimeInterval, bufferedTime: TimeInterval, configure: WWSimpleVideoPlayerConfigure) {
+    init(url: URL, currentTime: TimeInterval, duration: TimeInterval, bufferedTime: TimeInterval, configure: WWSimpleVideoPlayerConfigure) {
         
+        self.asset = .init(url: url)
         self.currentTime = currentTime
         self.duration = duration
         self.bufferedTime = bufferedTime
@@ -103,10 +122,13 @@ private extension VideoProgressBar {
         
         let playedWidth = width * progress
         let bufferWidth = width * bufferProgress
-        let thumbX = max(0, playedWidth - thumbSize / 2)
+        let thumbX = max(0, min(playedWidth - thumbSize * 0.5, width - thumbSize))
+        let previewWidth: CGFloat = 120
+        let previewHeight: CGFloat = 68
+        let previewX = max(0, min(playedWidth - previewWidth * 0.5, width - previewWidth))
         
         ZStack(alignment: .leading) {
-            
+                        
             Capsule()
                 .fill(Color.white.opacity(0.25))
                 .frame(height: 4)
@@ -169,10 +191,13 @@ private extension VideoProgressBar {
     func progressDragGestureOnChanged(width: CGFloat, value: DragGesture.Value) {
         
         let point = min(max(value.location.x / max(width, 1), 0), 1)
+        let target = duration * point
         
         isDragging = true
-        dragValue = duration * point
-        onChangedAction?(dragValue)
+        dragValue = target
+        onChangedAction?(target)
+        
+        thumbnailProvider.updatePreviewIfNeeded(for: target, step: configure.thumbnailStep)
     }
     
     /// 拖曳結束後執行 seek
@@ -184,8 +209,9 @@ private extension VideoProgressBar {
         let point = min(max(value.location.x / max(width, 1), 0), 1)
         let target = duration * point
         
-        isDragging = false
         dragValue = target
+        isDragging = false
+        thumbnailProvider.clear()
         onEndedAction?(target)
     }
 }

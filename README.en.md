@@ -48,7 +48,7 @@ File → Add Packages → https://github.com/William-Weng/WWSimpleVideoPlayerVie
 |---|---|
 | `source` | A `Binding` to the video source URL. |
 | `isAutoplay` | A `Binding` indicating whether to enable automatic playback. |
-| `configure` | The `style` and `color` configuration settings for the progress bar. |
+| `configure` | Configuration settings for the progress bar’s `style`, `color`, `thumbnail` `capture interval`, and `thumbnail size`. |
 
 ## 🚀 Examples
 
@@ -60,8 +60,8 @@ import WWSimpleVideoPlayerViewUI
 
 struct ContentView: View {
     
-    private let configure: WWSimpleVideoPlayerConfigure = .init(thumb: Image("thumb"), mainColor: .mint)
-    
+    private let configure: WWSimpleVideoPlayerConfigure = .init(thumb: Image("thumb"), mainColor: .mint, thumbnailStep: 10.0, thumbnailSize: .init(width: 240, height: 136))
+
     @State var isAutoplay = true
     @State var source: ShortVideo = .init(url: .init(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!)
     

@@ -48,7 +48,7 @@ File → Add Packages → https://github.com/William-Weng/WWSimpleVideoPlayerVie
 |---|---|
 | `source` | 影片來源 URL 的 `Binding`。 |
 | `isAutoplay` | 是否自動播放的 `Binding`。 |
-| `configure` | 進度條的`樣式`與`顏色`配置設定。 |
+| `configure` | 進度條的`樣式`、`顏色`，以及`縮圖擷取步進`與`縮圖尺寸`等相關配置設定。 |
 
 ## 🚀 範例
 
@@ -60,8 +60,8 @@ import WWSimpleVideoPlayerViewUI
 
 struct ContentView: View {
     
-    private let configure: WWSimpleVideoPlayerConfigure = .init(thumb: Image("thumb"), mainColor: .mint)
-    
+    private let configure: WWSimpleVideoPlayerConfigure = .init(thumb: Image("thumb"), mainColor: .mint, thumbnailStep: 10.0, thumbnailSize: .init(width: 240, height: 136))
+
     @State var isAutoplay = true
     @State var source: ShortVideo = .init(url: .init(string: "https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4")!)
     

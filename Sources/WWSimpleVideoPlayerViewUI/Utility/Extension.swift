@@ -39,3 +39,19 @@ extension AVPlayer {
         replaceCurrentItem(with: newItem)
     }
 }
+
+// MARK: - AVAssetImageGenerator
+extension AVAssetImageGenerator {
+    
+    static func build(asset: AVAsset, maximumSize: CGSize, requestedTime: CMTime = .positiveInfinity) -> Self {
+        
+        let generator = Self(asset: asset)
+        
+        generator.appliesPreferredTrackTransform = true
+        generator.maximumSize = maximumSize
+        generator.requestedTimeToleranceBefore = requestedTime
+        generator.requestedTimeToleranceAfter = requestedTime
+        
+        return generator
+    }
+}
