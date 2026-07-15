@@ -149,9 +149,9 @@ private extension WWSimpleVideoPlayerViewUI {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(Color.white.opacity(0.3))
+                    .fill(Color.white.opacity(0.25))
                 Capsule()
-                    .fill(Color.white)
+                    .fill(configure.mainColor)
                     .frame(width: geometry.size.width * CGFloat(hudType == .brightness ? brightness : volume))
             }
         }

@@ -94,11 +94,11 @@ private extension VideoProgressBar {
         ZStack(alignment: .leading) {
             
             Capsule()
-                .fill(configure.mainColor.opacity(0.25))
+                .fill(Color.white.opacity(0.25))
                 .frame(height: 4)
             
             Capsule()
-                .fill(configure.mainColor.opacity(0.45))
+                .fill(Color.white.opacity(0.45))
                 .frame(width: bufferWidth, height: 4)
             
             Capsule()
