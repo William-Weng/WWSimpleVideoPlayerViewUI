@@ -11,7 +11,7 @@
 
 根據 Apple 的 `AVPlayerViewController` 與 `AVPlayer` 所開發的輕量影片播放器。
 
-https://github.com/user-attachments/assets/e3781886-a9e2-4338-b14f-d2efd86ffed3
+https://github.com/user-attachments/assets/0e1b89ff-890c-4d2c-8b3f-5805f927d9a6
 
 ## 🎬 簡介
 
