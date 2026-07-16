@@ -7,6 +7,46 @@
 
 import AVKit
 
+// MARK: - Comparable
+extension Comparable {
+    
+    /// 將目前的值限制在指定的閉區間內。
+    ///
+    /// - Parameter range: 允許的最小值與最大值範圍。
+    /// - Returns: 落在 `range.lowerBound...range.upperBound` 之間的值。
+    func clamped(to range: ClosedRange<Self>) -> Self {
+        Swift.min(Swift.max(self, range.lowerBound), range.upperBound)
+    }
+}
+
+// MARK: - CGFloat
+extension CGFloat {
+    
+    /// 將目前的 x 位置依照可拖曳寬度轉成 0...1 的進度比例。
+    ///
+    /// - Parameter width: 可拖曳區域的寬度。
+    /// - Returns: 介於 0...1 之間的標準化進度值。
+    func normalizedProgress(for width: CGFloat) -> CGFloat {
+        
+        let safeWidth = Swift.max(width, 1.0)
+        let progress = self / safeWidth
+        
+        return progress.clamped(to: 0.0...1.0)
+    }
+    
+    /// 給相對位移用，例如 translation.width / width
+    ///
+    /// - Parameter width: 可拖曳區域的寬度。
+    /// - Returns: 介於 -1...1 之間的標準化進度值。
+    func normalizedDelta(for width: CGFloat) -> CGFloat {
+        
+        let safeWidth = Swift.max(width, 1.0)
+        let ratio = self / safeWidth
+        
+        return ratio.clamped(to: -1.0...1.0)
+    }
+}
+
 // MARK: - TimeInterval
 extension TimeInterval {
     

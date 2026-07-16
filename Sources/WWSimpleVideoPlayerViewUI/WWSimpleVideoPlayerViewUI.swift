@@ -33,6 +33,11 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
     
     @State private var currentDirection: DragDirection = .unknown   // 當前拖動方向（水平 / 垂直 / 未知）
     
+    @State private var progressText: String = "0:00"
+    @State private var horizontalDragStartTime: TimeInterval = 0
+    @State private var horizontalDragTargetTime: TimeInterval = 0
+    @State private var isHorizontalDragging = false
+    
     public var body: some View {
         
         GeometryReader { geometry in
@@ -43,6 +48,10 @@ public struct WWSimpleVideoPlayerViewUI<T: WWSimpleVideoPlayerDataSource>: View 
                         .ignoresSafeArea()
                     controlView(geometry: geometry)
                     hudOverlayView
+                        .opacity(hudType == .progress ? 0.0 : 1.0)
+                        .allowsHitTesting(false)
+                    progressOverlayView
+                        .opacity(hudType != .progress ? 0.0 : 1.0)
                         .allowsHitTesting(false)
                     hiddenVolumeView
                 }
@@ -109,8 +118,8 @@ private extension WWSimpleVideoPlayerViewUI {
                     BlurView(style: .systemMaterialDark)
                         .frame(width: size.width, height: size.height)
                 )
-                .opacity(0.8)
-
+                .opacity(0.7)
+            
             VStack(spacing: 12) {
                 iconView
                 progressBarView
@@ -125,6 +134,27 @@ private extension WWSimpleVideoPlayerViewUI {
         .shadow(radius: 10)
         .opacity(showHUD ? 1.0 : 0.0)
         .animation(.easeInOut(duration: 0.2), value: showHUD)
+    }
+    
+    /// 影片進度視圖 (及時快進)
+    var progressOverlayView: some View {
+        
+        Text(progressText)
+            .font(.system(size: 17, weight: .semibold, design: .rounded))
+            .monospacedDigit()
+            .foregroundStyle(.white)
+            .lineLimit(1)
+            .minimumScaleFactor(0.85)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                BlurView(style: .systemMaterialDark)
+                    .opacity(0.7)
+            )
+            .cornerRadius(16)
+            .shadow(radius: 10)
+            .opacity(showHUD ? 1.0 : 0.0)
+            .animation(.easeInOut(duration: 0.2), value: showHUD)
     }
     
     /// 亮度 / 音量 icon 視圖
@@ -225,6 +255,7 @@ private extension WWSimpleVideoPlayerViewUI {
         switch hudType {
         case .brightness: return brightnessIcon
         case .volume: return volumeIcon
+        case .progress: return ""
         }
     }
 }
@@ -234,18 +265,12 @@ private extension WWSimpleVideoPlayerViewUI {
     
     /// 依音量大小動態更換喇叭圖示
     var volumeIcon: String {
-        if volume == 0 { return "speaker.slash.fill" }
-        if volume < 0.33 { return "speaker.wave.1.fill" }
-        if volume < 0.66 { return "speaker.wave.2.fill" }
-        return "speaker.wave.3.fill"
+        Level(volume).volumeIconName
     }
     
     /// 依亮度大小動態更換喇叭圖示
     var brightnessIcon: String {
-        if brightness == 0 { return "moon" }
-        if brightness < 0.33 { return "sun.horizon" }
-        if brightness < 0.66 { return "sun.min.fill" }
-        return "sun.max.fill"
+        Level(brightness).brightnessIconName
     }
 }
 
@@ -343,7 +368,7 @@ private extension WWSimpleVideoPlayerViewUI {
     func videoDragGesture(screenWidth: CGFloat) -> some Gesture {
         DragGesture(minimumDistance: 10)
             .onChanged { videoDragGestureOnChanged(screenWidth: screenWidth, value: $0) }
-            .onEnded { videoDragGestureOnEnded(value: $0) }
+            .onEnded { _ in videoDragGestureOnEnded() }
     }
     
     /// 處理拖動過程中的事件（onChanged）
@@ -358,14 +383,12 @@ private extension WWSimpleVideoPlayerViewUI {
     ///   - value: DragGesture.Value，包含拖動距離、起始位置等資訊
     func videoDragGestureOnChanged(screenWidth: CGFloat, value: DragGesture.Value) {
         
-        updateDragDirection(screenWidth: screenWidth, value: value)
-        
-        guard currentDirection == .vertical else { return }
-        
+        updateDragDirection(value: value, minDistance: 10)
         showHUD = true
         
         switch currentDirection {
         case .vertical: verticalDirectionAction(screenWidth: screenWidth, value: value)
+        case .horizontal: horizontalDirectionAction(screenWidth: screenWidth, value: value)
         case .unknown: break
         }
     }
@@ -377,13 +400,12 @@ private extension WWSimpleVideoPlayerViewUI {
     /// 2. 更新基準亮度與音量（用於下次拖動）
     /// 3. 重置拖動方向為 `.unknown`
     /// 4. 設定 HUD 計時器，1 秒後關閉 HUD 並清除縮圖預覽
-    ///
-    /// - Parameter value: DragGesture.Value，包含拖動距離、起始位置等資訊
-    func videoDragGestureOnEnded(value: DragGesture.Value) {
+    func videoDragGestureOnEnded() {
         
         baseBrightness = brightness
         baseVolume = volume
         currentDirection = .unknown
+        isHorizontalDragging = false
         
         hudResetTask?.cancel()
         hudResetTask = Task { @MainActor in
@@ -417,12 +439,26 @@ private extension WWSimpleVideoPlayerViewUI {
     ///   - screenWidth: 螢幕寬度（用於計算區域分界）
     ///   - value: DragGesture.Value，包含拖動距離、起始位置等資訊
     func verticalDirectionAction(screenWidth: CGFloat, value: DragGesture.Value) {
+        
         switch parseDragZone(screenWidth: screenWidth, value: value) {
-        case .left: hudType = .brightness; updateScreenBrightness(value)
-        case .right: hudType = .volume; updateSystemVolume(value)
+        case .left: updateScreenBrightness(value)
+        case .right: updateSystemVolume(value)
         case .center: break
         }
     }
+    
+    /// 處理水平拖曳手勢 (影片預覽進度)
+    ///
+    /// - Parameters:
+    ///   - screenWidth: 可拖曳區域的總寬度，用來換算位移比例
+    ///   - value: 目前拖曳手勢的資訊
+    func horizontalDirectionAction(screenWidth: CGFloat, value: DragGesture.Value) {
+        updateVideoProgress(screenWidth: screenWidth, value: value)
+    }
+}
+
+// MARK: - 拖動更新
+private extension WWSimpleVideoPlayerViewUI {
     
     /// 根據垂直拖動更新螢幕亮度
     ///
@@ -438,6 +474,9 @@ private extension WWSimpleVideoPlayerViewUI {
     func updateScreenBrightness(_ value: DragGesture.Value) {
         
         let newBrightness = baseBrightness - (value.translation.height * 0.003)
+        
+        hudType = .brightness
+        showHUD = true
         
         brightness = max(0.0, min(1.0, newBrightness))
         SystemBrightnessManager.shared.setBrightness(brightness)
@@ -457,8 +496,37 @@ private extension WWSimpleVideoPlayerViewUI {
         
         let newVolume = baseVolume - (value.translation.height * 0.003)
         
+        hudType = .volume
+        showHUD = true
+        
         volume = max(0.0, min(1.0, newVolume))
         SystemVolumeManager.shared.setVolume(Float(volume))
+    }
+    
+    /// 依照拖曳距離計算影片預覽進度
+    ///
+    /// 第一次進入水平拖曳時，會先記錄當下的播放時間作為拖曳起點，後續再根據手指水平位移換算成進度比例，推算出新的目標時間
+    ///
+    /// - Parameters:
+    ///   - screenWidth: 可拖曳區域的總寬度，用來換算位移比例
+    ///   - value: 目前拖曳手勢的資訊
+    func updateVideoProgress(screenWidth: CGFloat, value: DragGesture.Value) {
+        
+        if !isHorizontalDragging {
+            isHorizontalDragging = true
+            horizontalDragStartTime = manager.currentTime
+        }
+        
+        let ratio = value.translation.width.normalizedDelta(for: screenWidth)
+        let delta = manager.duration * ratio
+        let target = (horizontalDragStartTime + delta).clamped(to: 0...manager.duration)
+        
+        hudType = .progress
+        showHUD = true
+        
+        horizontalDragTargetTime = target
+        progressText = "\(target.formatTime()) / \(manager.duration.formatTime())"
+        manager.seek(to: horizontalDragTargetTime)
     }
     
     /// 根據拖動起始位置，判斷當前屬於哪一個拖動區域（左 / 右 / 中間）
@@ -489,21 +557,16 @@ private extension WWSimpleVideoPlayerViewUI {
     /// 只有在「尚未決定方向（currentDirection == .unknown）」時才執行判斷，避免在拖動過程中重複設定方向
     ///
     /// - Parameters:
-    ///   - screenWidth: 螢幕寬度（用於計算區域分界）
     ///   - value: DragGesture.Value，包含拖動距離、起始位置等資訊
-    func updateDragDirection(screenWidth: CGFloat, value: DragGesture.Value) {
+    ///   - minDistance: 最小反應的拖動距離
+    func updateDragDirection(value: DragGesture.Value, minDistance: CGFloat) {
         
         guard currentDirection == .unknown else { return }
         
         let horizontalDistance = abs(value.translation.width)
         let verticalDistance = abs(value.translation.height)
         
-        guard max(horizontalDistance, verticalDistance) > 10 else { return }
-        guard verticalDistance > horizontalDistance else { return }
-        
-        switch parseDragZone(screenWidth: screenWidth, value: value) {
-        case .left, .right: currentDirection = .vertical
-        case .center: return
-        }
+        guard max(horizontalDistance, verticalDistance) > minDistance else { return }
+        currentDirection = (verticalDistance > horizontalDistance) ? .vertical : .horizontal
     }
 }

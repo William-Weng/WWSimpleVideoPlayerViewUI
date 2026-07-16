@@ -190,7 +190,7 @@ private extension VideoProgressBar {
     ///   - value: 手勢資訊
     func progressDragGestureOnChanged(width: CGFloat, value: DragGesture.Value) {
         
-        let point = min(max(value.location.x / max(width, 1), 0), 1)
+        let point = value.location.x.normalizedProgress(for: width)
         let target = duration * point
         
         isDragging = true
@@ -206,7 +206,7 @@ private extension VideoProgressBar {
     ///   - value: 手勢資訊
     func progressDragGestureOnEnded(width: CGFloat, value: DragGesture.Value) {
         
-        let point = min(max(value.location.x / max(width, 1), 0), 1)
+        let point = value.location.x.normalizedProgress(for: width)
         let target = duration * point
         
         dragValue = target

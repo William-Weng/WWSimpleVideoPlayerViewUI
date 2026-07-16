@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8140699330087CD200BD511B /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 8140699230087CD200BD511B /* WWSimpleVideoPlayerViewUI */; };
 		819B9FDF3004DA9000D7AD7B /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 819B9FDE3004DA9000D7AD7B /* WWSimpleVideoPlayerViewUI */; };
 		81CDF1CD3005C75900EDF0E6 /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 81CDF1CC3005C75900EDF0E6 /* WWSimpleVideoPlayerViewUI */; };
 		81CDF1D33005D0D300EDF0E6 /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 81CDF1D23005D0D300EDF0E6 /* WWSimpleVideoPlayerViewUI */; };
@@ -15,7 +16,7 @@
 		81CEC569300753200018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 81CEC568300753200018C7BF /* WWSimpleVideoPlayerViewUI */; };
 		81CEC56F3007558A0018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 81CEC56E3007558A0018C7BF /* WWSimpleVideoPlayerViewUI */; };
 		81CEC57530075A060018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 81CEC57430075A060018C7BF /* WWSimpleVideoPlayerViewUI */; };
-		81CEC578300770180018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 81CEC577300770180018C7BF /* WWSimpleVideoPlayerViewUI */; };
+		81CEC57B300775F50018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */ = {isa = PBXBuildFile; productRef = 81CEC57A300775F50018C7BF /* WWSimpleVideoPlayerViewUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,11 +39,12 @@
 				81CEC569300753200018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */,
 				81CDF1D33005D0D300EDF0E6 /* WWSimpleVideoPlayerViewUI in Frameworks */,
 				81CDF1CD3005C75900EDF0E6 /* WWSimpleVideoPlayerViewUI in Frameworks */,
-				81CEC578300770180018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */,
+				81CEC57B300775F50018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */,
 				81CDF1D930061B5100EDF0E6 /* WWSimpleVideoPlayerViewUI in Frameworks */,
 				81CEC563300735310018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */,
 				819B9FDF3004DA9000D7AD7B /* WWSimpleVideoPlayerViewUI in Frameworks */,
 				81CEC57530075A060018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */,
+				8140699330087CD200BD511B /* WWSimpleVideoPlayerViewUI in Frameworks */,
 				81CEC56F3007558A0018C7BF /* WWSimpleVideoPlayerViewUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,7 +104,8 @@
 				81CEC568300753200018C7BF /* WWSimpleVideoPlayerViewUI */,
 				81CEC56E3007558A0018C7BF /* WWSimpleVideoPlayerViewUI */,
 				81CEC57430075A060018C7BF /* WWSimpleVideoPlayerViewUI */,
-				81CEC577300770180018C7BF /* WWSimpleVideoPlayerViewUI */,
+				81CEC57A300775F50018C7BF /* WWSimpleVideoPlayerViewUI */,
+				8140699230087CD200BD511B /* WWSimpleVideoPlayerViewUI */,
 			);
 			productName = Example;
 			productReference = 8177C5772F91CB0F00ACEA3E /* Example.app */;
@@ -133,7 +136,7 @@
 			mainGroup = 8177C56E2F91CB0F00ACEA3E;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				81CEC576300770180018C7BF /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */,
+				8140699130087CD200BD511B /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8177C5782F91CB0F00ACEA3E /* Products */;
@@ -379,17 +382,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		81CEC576300770180018C7BF /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */ = {
+		8140699130087CD200BD511B /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/William-Weng/WWSimpleVideoPlayerViewUI";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 1.3.0;
+				minimumVersion = 1.3.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		8140699230087CD200BD511B /* WWSimpleVideoPlayerViewUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8140699130087CD200BD511B /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */;
+			productName = WWSimpleVideoPlayerViewUI;
+		};
 		819B9FDE3004DA9000D7AD7B /* WWSimpleVideoPlayerViewUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WWSimpleVideoPlayerViewUI;
@@ -422,9 +430,8 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WWSimpleVideoPlayerViewUI;
 		};
-		81CEC577300770180018C7BF /* WWSimpleVideoPlayerViewUI */ = {
+		81CEC57A300775F50018C7BF /* WWSimpleVideoPlayerViewUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 81CEC576300770180018C7BF /* XCRemoteSwiftPackageReference "WWSimpleVideoPlayerViewUI" */;
 			productName = WWSimpleVideoPlayerViewUI;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -24,7 +24,10 @@ final class VideoPlayerManager {
     var duration: Double = 0                                    // 影片總長度（秒）
     var bufferedTime: Double = 0                                // 已緩衝到的時間（秒）
     
+    @ObservationIgnored
     private var timeObserver: Any?                              // 定期時間監聽 token
+    
+    @ObservationIgnored
     private var currentItemObservation: NSKeyValueObservation?  // 目前影片項目的 KVO 監聽
     
     init() {
