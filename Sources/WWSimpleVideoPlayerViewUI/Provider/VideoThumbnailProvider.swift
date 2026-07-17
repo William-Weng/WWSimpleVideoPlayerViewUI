@@ -59,26 +59,29 @@ extension VideoThumbnailProvider {
     func updatePreviewIfNeeded(for second: TimeInterval, step: TimeInterval) {
         
         guard let generator else { return }
+        
         let snappedSecond = max(0, floor(second / step) * step)
         
         guard lastRequestedSecond != snappedSecond else { return }
+        
         lastRequestedSecond = snappedSecond
-        
         requestID = UUID()
+        
         let currentID = requestID
-        
-        generator.cancelAllCGImageGeneration()
-        
         let time = CMTime(seconds: snappedSecond, preferredTimescale: 600)
         
-        generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { [weak self] _, cgImage, _, _, error in
-            
-            guard let self else { return }
-            guard self.requestID == currentID else { return }
-            guard error == nil, let cgImage else { return }
-            
-            Task { @MainActor in
-                self.previewImage = UIImage(cgImage: cgImage)
+        Task {
+            do {
+                generator.requestedTimeToleranceBefore = .zero
+                generator.requestedTimeToleranceAfter = CMTime(seconds: 2, preferredTimescale: 600)
+                
+                let result = try await generator.image(at: time)
+                
+                guard self.requestID == currentID else { return }
+                await MainActor.run { self.previewImage = UIImage(cgImage: result.image) }
+                
+            } catch {
+                self.previewImage = nil
             }
         }
     }

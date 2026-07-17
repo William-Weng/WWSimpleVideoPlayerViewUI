@@ -90,7 +90,7 @@ extension AVAssetImageGenerator {
     ///   - toleranceBefore: 允許在指定時間點「之前」偏移的最大時間
     ///   - toleranceAfter: 允許在指定時間點「之後」偏移的最大時間
     /// - Returns: 對應時間點的縮圖
-    static func build(asset: AVAsset, maximumSize: CGSize, toleranceBefore: CMTime = .positiveInfinity, toleranceAfter: CMTime = .positiveInfinity) -> Self {
+    static func build(asset: AVAsset, maximumSize: CGSize, toleranceBefore: CMTime = .zero, toleranceAfter: CMTime = .zero) -> Self {
         
         let generator = Self(asset: asset)
         
