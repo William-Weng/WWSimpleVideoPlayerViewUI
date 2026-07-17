@@ -83,14 +83,21 @@ extension AVPlayer {
 // MARK: - AVAssetImageGenerator
 extension AVAssetImageGenerator {
     
-    static func build(asset: AVAsset, maximumSize: CGSize, requestedTime: CMTime = .positiveInfinity) -> Self {
+    /// 建立 AVAssetImageGenerator
+    /// - Parameters:
+    ///   - asset: 影片的AVAsset
+    ///   - maximumSize: 縮圖的最大尺寸
+    ///   - toleranceBefore: 允許在指定時間點「之前」偏移的最大時間
+    ///   - toleranceAfter: 允許在指定時間點「之後」偏移的最大時間
+    /// - Returns: 對應時間點的縮圖
+    static func build(asset: AVAsset, maximumSize: CGSize, toleranceBefore: CMTime = .positiveInfinity, toleranceAfter: CMTime = .positiveInfinity) -> Self {
         
         let generator = Self(asset: asset)
         
         generator.appliesPreferredTrackTransform = true
         generator.maximumSize = maximumSize
-        generator.requestedTimeToleranceBefore = requestedTime
-        generator.requestedTimeToleranceAfter = requestedTime
+        generator.requestedTimeToleranceBefore = toleranceBefore
+        generator.requestedTimeToleranceAfter = toleranceAfter
         
         return generator
     }

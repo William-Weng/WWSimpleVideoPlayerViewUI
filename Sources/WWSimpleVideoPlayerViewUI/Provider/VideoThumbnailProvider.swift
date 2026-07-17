@@ -39,7 +39,7 @@ extension VideoThumbnailProvider {
         
         do {
             _ = try await asset.load(.tracks)
-            self.generator = AVAssetImageGenerator.build(asset: asset, maximumSize: size)
+            self.generator = .build(asset: asset, maximumSize: size)
         } catch {
             print("prepare thumbnail failed:", error)
         }

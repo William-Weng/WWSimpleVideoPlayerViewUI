@@ -1,6 +1,6 @@
 [English](./README.en.md) | [繁體中文](./README.md)
 
-# WWSimpleVideoPlayerViewUI
+# [WWSimpleVideoPlayerViewUI](https://swiftpackageindex.com/William-Weng)
 
 [![Swift-5.10+](https://img.shields.io/badge/Swift-5.10+-orange.svg)](https://developer.apple.com/swift/)
 [![iOS-17.0+](https://img.shields.io/badge/iOS-17.0+-pink.svg?style=flat)](https://developer.apple.com/swift/)
