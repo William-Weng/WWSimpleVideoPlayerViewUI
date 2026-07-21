@@ -301,6 +301,7 @@ private extension WWSimpleVideoPlayerViewUI {
         hudResetTask = nil
         progressResetTask?.cancel()
         progressResetTask = nil
+        manager.teardown()
     }
 }
 
@@ -384,7 +385,6 @@ private extension WWSimpleVideoPlayerViewUI {
     func videoDragGestureOnChanged(screenWidth: CGFloat, value: DragGesture.Value) {
         
         updateDragDirection(value: value, minDistance: 10)
-        showHUD = true
         
         switch currentDirection {
         case .vertical: verticalDirectionAction(screenWidth: screenWidth, value: value)

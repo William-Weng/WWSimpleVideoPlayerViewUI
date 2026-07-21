@@ -36,8 +36,7 @@ final class VideoPlayerManager {
     }
     
     deinit {
-        removeTimeObserver()
-        removeCurrentItemObservation()
+        teardown()
     }
 }
 
@@ -77,6 +76,7 @@ extension VideoPlayerManager {
     /// 載入影片
     /// - Parameter url: 影片網址
     func loadVideo(url: URL) {
+        
         removeCurrentItemObservation()
         
         let item = AVPlayerItem(url: url)
@@ -90,6 +90,19 @@ extension VideoPlayerManager {
     func seek(to seconds: Double) {
         let time = CMTime(seconds: seconds, preferredTimescale: 600)
         player.seek(to: time)
+    }
+    
+    /// 停止並釋放播放器相關資源
+    ///
+    /// 建議在以下時機呼叫：
+    /// - View 即將消失時
+    /// - 不再需要播放影片時
+    /// - 想要明確中止目前影片播放與監聽時
+    func teardown() {
+        player.pause()
+        removeTimeObserver()
+        removeCurrentItemObservation()
+        player.replaceCurrentItem(with: nil)
     }
 }
 
